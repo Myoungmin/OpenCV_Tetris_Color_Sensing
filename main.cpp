@@ -251,6 +251,8 @@ void NewTetriminos()
 		game_over |= game_board[cur_line + 1][i] & temp_line[1][i];	//or 연산으로 어디든 겹치면 플레그 켜진다
 		game_over |= game_board[cur_line + 2][i] & temp_line[2][i];
 		game_over |= game_board[cur_line + 3][i] & temp_line[3][i];
+
+		if (game_over != 0) break;
 	}
 
 	for (int i = 1; i < 11; i++)
@@ -350,9 +352,10 @@ int main() {
 			cvtColor(RIGHT, RIGHT, COLOR_GRAY2BGR);
 
 			for (int i = 0; i < contours_UP.size(); i++) {
-				if (contourArea(contours_UP[i]) > 300 && button == 0 && clear == 1)
+				if (button != 0 || clear == 0) break;
+				else if (contourArea(contours_UP[i]) > 300 && button == 0 && clear == 1)
 				{
-					drawContours(UP, contours_UP, i, Scalar(0, 0, 255), 1);
+					drawContours(UP, contours_UP, i, Scalar(0, 255, 0), -1);
 					button = up_;
 					clear = 0;
 				}
@@ -361,38 +364,78 @@ int main() {
 			
 
 			for (int i = 0; i < contours_LEFT.size(); i++) {
-				if (contourArea(contours_LEFT[i]) > 300 && button == 0 && clear == 1)
+				if (button != 0 || clear == 0) break;
+				else if (contourArea(contours_LEFT[i]) > 300 && button == 0 && clear == 1)
 				{
-					drawContours(LEFT, contours_LEFT, i, Scalar(0, 0, 255), 1);
+					drawContours(LEFT, contours_LEFT, i, Scalar(0, 255, 0), -1);
 					button = left_;
 					clear = 0;
 				}
 			}
 
 			for (int i = 0; i < contours_RIGHT.size(); i++) {
-				if (contourArea(contours_RIGHT[i]) > 300 && button == 0 && clear == 1)
+				if (button != 0 || clear == 0) break;
+				else if (contourArea(contours_RIGHT[i]) > 300 && button == 0 && clear == 1)
 				{
-					drawContours(RIGHT, contours_RIGHT, i, Scalar(0, 0, 255), 1);
+					drawContours(RIGHT, contours_RIGHT, i, Scalar(0, 255, 0), -1);
 					button = right_;
 					clear = 0;
 				}
 			}
 			
 			for (int i = 0; i < contours_DOWN.size(); i++) {
-				if (contourArea(contours_DOWN[i]) > 300 && button == 0 && clear == 1)
+				if (button != 0 || clear == 0) break;
+				else if (contourArea(contours_DOWN[i]) > 300 && button == 0 && clear == 1)
 				{
-					drawContours(DOWN, contours_DOWN, i, Scalar(0, 0, 255), 1);
+					drawContours(DOWN, contours_DOWN, i, Scalar(0, 255, 0), -1);
 					button = down_;
 					clear = 0;
 				}
 			}
 
-			if (button == 0) clear = 1;
+			static int count = 0;	
+			//clear 변수를 써도 너무 입력이 자주되어 button입력이 안되는것 여러번 반복되면 입력되게 바꿈 
+			if (button == 0) count++;
+			if (count == 2) {
+				count = 0;
+				clear = 1;
+			}
 
-			rectangle(img, Rect(img.cols - (button_size * 4), img.rows/2 - (button_size * 3 / 2), button_size, button_size), Scalar(0, 0, 255), 2);
-			rectangle(img, Rect(img.cols - (button_size * 4), img.rows/2 + (button_size * 3 / 2), button_size, button_size), Scalar(0, 0, 255), 2);
-			rectangle(img, Rect(img.cols - (button_size * 6), img.rows / 2, button_size, button_size), Scalar(0, 0, 255), 2);
-			rectangle(img, Rect(img.cols - (button_size * 2), img.rows/2, button_size, button_size), Scalar(0, 0, 255), 2);
+			int button_color = 0;
+			int button_line = 2;
+
+			//입력되면 네모 색 두께 바뀌게
+			if (button == up_) {
+				button_color = 255;
+				button_line = 5;
+			}
+			rectangle(img, Rect(img.cols - (button_size * 4), img.rows/2 - (button_size * 3 / 2), button_size, button_size), Scalar(button_color, 0, 255), button_line);
+			button_color = 0;
+			button_line = 2;
+
+			if (button == left_) {
+				button_color = 255;
+				button_line = 5;
+			}
+			rectangle(img, Rect(img.cols - (button_size * 6), img.rows / 2, button_size, button_size), Scalar(button_color, 0, 255), button_line);
+			button_color = 0;
+			button_line = 2;
+
+			if (button == right_) {
+				button_color = 255;
+				button_line = 5;
+			}
+			rectangle(img, Rect(img.cols - (button_size * 2), img.rows/2, button_size, button_size), Scalar(button_color, 0, 255), button_line);
+			button_color = 0;
+			button_line = 2;
+
+			if (button == down_) {
+				button_color = 255;
+				button_line = 5;
+			}
+			rectangle(img, Rect(img.cols - (button_size * 4), img.rows / 2 + (button_size * 3 / 2), button_size, button_size), Scalar(button_color, 0, 255), button_line);
+			button_color = 0;
+			button_line = 2;
 
 
 			if (new_block == 1)
