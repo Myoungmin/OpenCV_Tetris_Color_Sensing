@@ -312,6 +312,11 @@ int main() {
 		}
 		new_block = 1;
 
+		int width = cvRound(cap.get(CAP_PROP_FRAME_WIDTH));
+		int height = cvRound(cap.get(CAP_PROP_FRAME_HEIGHT));
+		double fps = 1000 / 200;	//delay를 200ms로 만들어서 그에따른 프레임 계산
+		int fourcc = VideoWriter::fourcc('D', 'I', 'V', 'X');
+		VideoWriter writer("output.avi", fourcc, fps, Size(width, height));
 
 		while (game_over == 0)	//게임종료 플레그가 꺼저있을동안 반복
 		{
@@ -320,6 +325,8 @@ int main() {
 			cap >> img;	//비디오 캡쳐 영상으로
 
 			flip(img, img, 1);	//비디오 좌우 반전
+
+			
 
 			key = img.clone();
 			cvtColor(key, key, COLOR_BGR2HSV);
@@ -518,12 +525,17 @@ int main() {
 			}
 
 			imshow("src", img);
+
+			writer.write(img);
+
+			imshow("key", key);
+
 			imshow("UP", UP);
 			imshow("DOIWN", DOWN);
 			imshow("LEFT", LEFT);
 			imshow("RIGHT", RIGHT);
 		
-			imshow("key", key);
+			
 
 			if(waitKeyEx(200) == 27) return 0;
 
